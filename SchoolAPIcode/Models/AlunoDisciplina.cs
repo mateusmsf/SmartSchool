@@ -4,14 +4,14 @@ namespace SchoolAPIcode.Models
     {
         public AlunoDisciplina() { }
 
-        public AlunoDisciplina(int alunoId, int professorId)
+        public AlunoDisciplina(int alunoId, int disciplinaId)
         {
             this.AlunoId = alunoId;
-            this.ProfessorId = professorId;
+            this.DisciplinaId = disciplinaId;
         }
         public int AlunoId { get; set; }
         public Aluno Aluno { get; set; }
-        public int ProfessorId { get; set; }
-        public Professor Professor { get; set; }
+        public int DisciplinaId { get; set; }
+        public Disciplina Disciplina { get; set; }
     }
 }
