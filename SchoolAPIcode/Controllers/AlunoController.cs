@@ -12,35 +12,12 @@ namespace SchoolAPIcode.Controllers
     public class AlunoController : ControllerBase
     {
         private readonly SmartContext _context;
+        private readonly IRepository _repo;
 
-        public AlunoController(SmartContext context) {
+        public AlunoController(SmartContext context, IRepository repo) {
             _context = context;
+            _repo = repo;
         }
-
-        /*public List<Aluno> Alunos = new List<Aluno>()
-        {
-            new Aluno(){
-                id = 1,
-                nome = "Mateusa",
-                sobreNome = "oliveira",
-                telefone = "12345"
-            },
-
-            new Aluno(){
-                id = 2,
-                nome = "Silva",
-                sobreNome = "lucas",
-                telefone = "12345"
-            },
-
-            new Aluno(){
-                id = 3,
-                nome = "França",
-                sobreNome = "carlos",
-                telefone = "12345"
-            }
-        };*/
-
 
 
         [HttpGet]
@@ -76,9 +53,13 @@ namespace SchoolAPIcode.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Aluno aluno)
         {
-            _context.Add(aluno);
-            _context.SaveChanges();
-            return Ok(aluno);
+            _repo.Add(aluno);
+            if(_repo.SaveChanges())
+            {
+                return Ok(aluno);
+            }
+
+            return BadRequest("Aluno não cadastrado!");
         }
 
         [HttpPut("{id}")]
@@ -86,9 +67,13 @@ namespace SchoolAPIcode.Controllers
         {
             var alu = _context.Alunos.AsNoTracking().FirstOrDefault(a => a.id == id);
             if(alu == null) return BadRequest("Aluno não encontrado");
-            _context.Update(aluno);
-            _context.SaveChanges();
-            return Ok(aluno);
+            _repo.Update(aluno);
+            if(_repo.SaveChanges())
+            {
+                return Ok(aluno);
+            }
+
+            return BadRequest("Aluno não alterado!");
         }
 
         [HttpPatch("{id}")]
@@ -106,9 +91,14 @@ namespace SchoolAPIcode.Controllers
         {
             var alu = _context.Alunos.FirstOrDefault(a => a.id == id);
             if(alu == null) return BadRequest("Aluno não encontrado");
-            _context.Remove(alu);
-            _context.SaveChanges();
-            return Ok();
+
+            _repo.Delete(alu);
+            if(_repo.SaveChanges())
+            {
+                return Ok("Aluno Excluido!");
+            }
+
+            return BadRequest("Aluno não Deletado!");
             
             
         }

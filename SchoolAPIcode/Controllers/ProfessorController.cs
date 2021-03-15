@@ -11,8 +11,11 @@ namespace SchoolAPIcode.Controllers
     public class ProfessorController : ControllerBase
     {
         private readonly SmartContext _context;
-        public ProfessorController(SmartContext context) {
+
+        private readonly IRepository _repo;
+        public ProfessorController(SmartContext context, IRepository repo) {
             _context = context;
+            _repo = repo;
         }
 
         [HttpGet]
@@ -41,9 +44,13 @@ namespace SchoolAPIcode.Controllers
         [HttpPost]
         public IActionResult Post(Professor professor)
         {
-            _context.Add(professor);
-            _context.SaveChanges();
-            return Ok(professor);
+            _repo.Add(professor);
+            if(_repo.SaveChanges())
+            {
+                return Ok(professor);
+            }
+
+            return BadRequest("Professor não cadastrado!");
         }
 
         [HttpPut("{id}")]
@@ -51,9 +58,14 @@ namespace SchoolAPIcode.Controllers
         {
             Professor prof = _context.Professores.AsNoTracking().FirstOrDefault(p => p.id == id);
             if(prof == null) return BadRequest("Não existe professor com o id informado");
-            _context.Update(professor);
-            _context.SaveChanges();
-            return Ok(professor);
+            
+            _repo.Update(professor);
+            if(_repo.SaveChanges())
+            {
+                return Ok(professor);
+            }
+
+            return BadRequest("Professor não atualizado!");
         }
 
         [HttpDelete("{id}")]
@@ -61,9 +73,15 @@ namespace SchoolAPIcode.Controllers
         {
             Professor prof = _context.Professores.AsNoTracking().FirstOrDefault(p => p.id == id);
             if(prof == null) return BadRequest("Não existe professor com esse id!");
-            _context.Remove(prof);
-            _context.SaveChanges();
-            return Ok("Excluso com sucesso!");
+
+            _repo.Delete(prof);
+            if(_repo.SaveChanges())
+            {
+                return Ok("Aluno deletado");
+            }
+
+            return BadRequest("Professor não deletado!");
+
         }
 
 

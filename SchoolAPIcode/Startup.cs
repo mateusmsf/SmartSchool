@@ -34,6 +34,11 @@ namespace SchoolAPIcode
             );
 
             services.AddControllers();
+
+            services.AddScoped<IRepository, Repository>();
+
+
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SchoolAPIcode", Version = "v1" });
