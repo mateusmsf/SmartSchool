@@ -85,9 +85,24 @@ namespace SchoolAPIcode.Data
         }
 
 
+        public Aluno GetAlunoByName(string nome,
+                                  bool includeProfessor = false)
+        {
+            IQueryable<Aluno> query = _context.Alunos;
+            if(includeProfessor)
+            {
+                query = query.Include(a => a.AlunosDisciplinas)
+                             .ThenInclude(ad => ad.Disciplina)
+                             .ThenInclude(d => d.Professor);
+            }
+            query = query.AsNoTracking().Where(aluno => aluno.nome.Contains(nome));
+            return query.FirstOrDefault();
+        }
 
 
-        public Professor[] GetAllProfessores(bool includeAlunos)
+
+
+        public Professor[] GetAllProfessores(bool includeAlunos = false)
         {
             IQueryable<Professor> query = _context.Professores;
             if(includeAlunos)
@@ -130,6 +145,20 @@ namespace SchoolAPIcode.Data
                              .ThenInclude(d => d.Aluno);
             }
             query = query.AsNoTracking().Where(professor => professor.id == id);
+            return query.FirstOrDefault();
+        }
+
+        public Professor GetProfessorByName(string nome,
+                                          bool includeAluno = false)
+        {
+            IQueryable<Professor> query = _context.Professores;
+            if(includeAluno)
+            {
+                query = query.Include(ad => ad.Disciplinas)
+                             .ThenInclude(a => a.AlunosDisciplinas)
+                             .ThenInclude(d => d.Aluno);
+            }
+            query = query.AsNoTracking().Where(professor => professor.nome.Contains(nome));
             return query.FirstOrDefault();
         }
     }

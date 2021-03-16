@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchoolAPIcode.Data;
+using SchoolAPIcode.Dtos;
 using SchoolAPIcode.Models;
 
 namespace SchoolAPIcode.Controllers
@@ -10,25 +13,26 @@ namespace SchoolAPIcode.Controllers
     [Route("api/[controller]")]
     public class ProfessorController : ControllerBase
     {
-        private readonly SmartContext _context;
-
         private readonly IRepository _repo;
-        public ProfessorController(SmartContext context, IRepository repo) {
-            _context = context;
+        private readonly IMapper _mapper;
+        public ProfessorController(IRepository repo, IMapper mapper) {
             _repo = repo;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-            if(_context.Professores == null) return BadRequest("Nenhum professor encontrado!");
-            return Ok(_context.Professores);
+            /*var alunos = _repo.GetAllAlunos(true);
+            return Ok(_mapper.Map<IEnumerable<AlunoDto>>(alunos));*/
+
+            return null;
         }
     
         [HttpGet("byId")] //Atribuição atravez do ?biId=1
         public IActionResult GetById(int id)
         { 
-            Professor prof = _context.Professores.AsNoTracking().FirstOrDefault(p => p.id == id);
+            Professor prof = _repo.GetProfessorById(id, true);
             if(prof == null) return BadRequest("Nenhum aluno encontrado com esse ID!");
             return Ok(prof);
         }
@@ -36,7 +40,7 @@ namespace SchoolAPIcode.Controllers
         [HttpGet("{nome}")]
         public IActionResult ByName(string nome)
         {
-            Professor prof = _context.Professores.AsNoTracking().FirstOrDefault(p => p.nome.Contains(nome));
+            Professor prof = _repo.GetProfessorByName(nome);
             if(prof == null) return BadRequest("Não existe nenhum professor com esse nome!");
             return Ok(prof);
         }
@@ -56,7 +60,7 @@ namespace SchoolAPIcode.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, Professor professor)
         {
-            Professor prof = _context.Professores.AsNoTracking().FirstOrDefault(p => p.id == id);
+            Professor prof = _repo.GetProfessorById(id);
             if(prof == null) return BadRequest("Não existe professor com o id informado");
             
             _repo.Update(professor);
@@ -71,7 +75,7 @@ namespace SchoolAPIcode.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            Professor prof = _context.Professores.AsNoTracking().FirstOrDefault(p => p.id == id);
+            Professor prof = _repo.GetProfessorById(id);
             if(prof == null) return BadRequest("Não existe professor com esse id!");
 
             _repo.Delete(prof);
