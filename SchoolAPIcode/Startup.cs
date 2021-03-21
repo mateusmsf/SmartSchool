@@ -45,7 +45,12 @@ namespace SchoolAPIcode
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SchoolAPIcode", Version = "v1" });
+                c.SwaggerDoc("SmartSchoolApi", 
+                             new Microsoft.OpenApi.Models.OpenApiInfo() 
+                                { 
+                                    Title = "SmartSchool Api", 
+                                    Version = "1.0"
+                                });
             });
         }
 
@@ -55,13 +60,18 @@ namespace SchoolAPIcode
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SchoolAPIcode v1"));
+                app.UseSwagger().
+                    UseSwaggerUI(c => {
+                        c.SwaggerEndpoint("/swagger/SmartSchoolApi/swagger.json", "SmartSchool");
+                        c.RoutePrefix = "";
+                    });
             }
 
             //app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseSwagger();
 
             //app.UseAuthorization();
 
