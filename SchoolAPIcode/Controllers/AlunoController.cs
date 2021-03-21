@@ -47,45 +47,54 @@ namespace SchoolAPIcode.Controllers
 
             if(aluno == null) return BadRequest("Aluno não encontrado");
 
-            return Ok(aluno);
+            return Ok(_mapper.Map<AlunoDto>(aluno));
         }
 
 
         [HttpPost]
-        public IActionResult Post([FromBody] Aluno aluno)
+        public IActionResult Post([FromBody] AlunoRegistrarDto model)
         {
+            var aluno = _mapper.Map<Aluno>(model);
+
             _repo.Add(aluno);
             if(_repo.SaveChanges())
             {
-                return Ok(aluno);
+                return Created($"/api/aluno/{model.id}", _mapper.Map<AlunoDto>(aluno));
             }
 
             return BadRequest("Aluno não cadastrado!");
         }
 
+
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Aluno aluno)
+        public IActionResult Put(int id, AlunoRegistrarDto model)
         {
-            var alu = _repo.GetAlunoById(id);
-            if(alu == null) return BadRequest("Aluno não encontrado");
+            var aluno = _repo.GetAlunoById(id);
+            if(aluno == null) return BadRequest("Aluno não encontrado");
+
+            _mapper.Map(model, aluno);
+
             _repo.Update(aluno);
             if(_repo.SaveChanges())
             {
-                return Ok(aluno);
+                return Created($"/api/aluno/{model.id}", _mapper.Map<AlunoDto>(aluno));
             }
 
             return BadRequest("Aluno não alterado!");
         }
 
         [HttpPatch("{id}")]
-        public IActionResult Patch(int id, Aluno aluno)
+        public IActionResult Patch(int id, AlunoRegistrarDto model)
         {
-            var alu = _repo.GetAlunoById(id);
-            if(alu == null) return BadRequest("Aluno não encontrado");
+            var aluno = _repo.GetAlunoById(id);
+            if(aluno == null) return BadRequest("Aluno não encontrado");
+
+            _mapper.Map(aluno, model);
+
             _repo.Update(aluno);
             if(_repo.SaveChanges())
             {
-                return Ok(aluno);
+                return Created($"/api/aluno/{model.id}", _mapper.Map<AlunoDto>(aluno));
             }
 
             return BadRequest("Aluno não alterado!");
@@ -94,10 +103,10 @@ namespace SchoolAPIcode.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var alu = _repo.GetAlunoById(id);
-            if(alu == null) return BadRequest("Aluno não encontrado");
+            var aluno = _repo.GetAlunoById(id);
+            if(aluno == null) return BadRequest("Aluno não encontrado");
 
-            _repo.Delete(alu);
+            _repo.Delete(aluno);
             if(_repo.SaveChanges())
             {
                 return Ok("Aluno Excluido!");

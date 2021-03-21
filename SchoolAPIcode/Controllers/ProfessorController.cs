@@ -23,10 +23,8 @@ namespace SchoolAPIcode.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            /*var alunos = _repo.GetAllAlunos(true);
-            return Ok(_mapper.Map<IEnumerable<AlunoDto>>(alunos));*/
-
-            return null;
+            var professor = _repo.GetAllProfessores(true);
+            return Ok(_mapper.Map<IEnumerable<ProfessorDto>>(professor));
         }
     
         [HttpGet("byId")] //Atribuição atravez do ?biId=1
@@ -34,7 +32,7 @@ namespace SchoolAPIcode.Controllers
         { 
             Professor prof = _repo.GetProfessorById(id, true);
             if(prof == null) return BadRequest("Nenhum aluno encontrado com esse ID!");
-            return Ok(prof);
+            return Ok(_mapper.Map<ProfessorDto>(prof));
         }
 
         [HttpGet("{nome}")]
@@ -42,31 +40,35 @@ namespace SchoolAPIcode.Controllers
         {
             Professor prof = _repo.GetProfessorByName(nome);
             if(prof == null) return BadRequest("Não existe nenhum professor com esse nome!");
-            return Ok(prof);
+            return Ok(_mapper.Map<ProfessorDto>(prof));
         }
 
         [HttpPost]
-        public IActionResult Post(Professor professor)
+        public IActionResult Post(ProfessorDto model)
         {
+            Professor professor = _mapper.Map<Professor>(model);
+
             _repo.Add(professor);
             if(_repo.SaveChanges())
             {
-                return Ok(professor);
+                return Created($"/api/professor/{model.id}", _mapper.Map<ProfessorDto>(professor));
             }
 
             return BadRequest("Professor não cadastrado!");
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Professor professor)
+        public IActionResult Put(int id, ProfessorRegistrarDto model)
         {
             Professor prof = _repo.GetProfessorById(id);
             if(prof == null) return BadRequest("Não existe professor com o id informado");
             
-            _repo.Update(professor);
+            _mapper.Map(model, prof);
+
+            _repo.Update(prof);
             if(_repo.SaveChanges())
             {
-                return Ok(professor);
+                return Ok(prof);
             }
 
             return BadRequest("Professor não atualizado!");

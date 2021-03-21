@@ -1,4 +1,5 @@
 using AutoMapper;
+using SchoolAPIcode.Dtos;
 using SchoolAPIcode.Models;
 
 namespace SchoolAPIcode.Helpers
@@ -7,7 +8,7 @@ namespace SchoolAPIcode.Helpers
     {
         public SmartSchoolProfile()
         {
-            CreateMap<Aluno, Dtos.AlunoDto>()
+            CreateMap<Aluno, AlunoDto>()
                 .ForMember(
                     dest => dest.nome,
                     opt => opt.MapFrom(src => $"{src.nome} {src.sobreNome}")
@@ -16,7 +17,21 @@ namespace SchoolAPIcode.Helpers
                     dest => dest.idade,
                     opt => opt.MapFrom(src => src.dataNasc.GetCurrentAge())
                 );
-            ;
+
+            CreateMap<AlunoDto, Aluno>();
+
+            CreateMap<Aluno, AlunoRegistrarDto>().ReverseMap();
+
+            CreateMap<Professor, ProfessorDto>()
+                .ForMember(
+                    dest => dest.nome,
+                    opt => opt.MapFrom(src => $"{src.nome} {src.sobreNome}")
+                );
+
+            CreateMap<ProfessorDto, Professor>();
+
+            CreateMap<Professor, ProfessorRegistrarDto>().ReverseMap();
+
         }
     }
 }
