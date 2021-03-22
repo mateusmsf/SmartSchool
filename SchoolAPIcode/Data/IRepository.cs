@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using SchoolAPIcode.Helpers;
 using SchoolAPIcode.Models;
 
 namespace SchoolAPIcode.Data
@@ -13,6 +16,7 @@ namespace SchoolAPIcode.Data
 
         //Metodos Alunos 
          Aluno[] GetAllAlunos(bool includeProfessor = false);
+         Task<PageList<Aluno>> GetAllAlunosAsync(PageParams pageParams, bool includeProfessor = false);
          Aluno[] GetAllAlunosByDisciplinaId( int disciplinaId, bool includeProfessor = false);
          Aluno GetAlunoById( int id, bool includeProfessor = false);
          Aluno GetAlunoByName(string nome, bool includeProfessor = false);
