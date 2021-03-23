@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SchoolAPIcode.Data;
 using SchoolAPIcode.Dtos;
+using SchoolAPIcode.Helpers;
 using SchoolAPIcode.Models;
 
 namespace SchoolAPIcode.Controllers
@@ -19,30 +21,23 @@ namespace SchoolAPIcode.Controllers
             _repo = repo;
             _mapper = mapper;
         }
-
+        
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get([FromQuery]PageParams pageParams)
         {
-            var professor = _repo.GetAllProfessores(true);
-            return Ok(_mapper.Map<IEnumerable<ProfessorDto>>(professor));
-        }
-    
-        [HttpGet("byId")] //Atribuição atravez do ?biId=1
-        public IActionResult GetById(int id)
-        { 
-            Professor prof = _repo.GetProfessorById(id, true);
-            if(prof == null) return BadRequest("Nenhum aluno encontrado com esse ID!");
-            return Ok(_mapper.Map<ProfessorDto>(prof));
-        }
+            var professores = await _repo.GetProfessoresAsync(pageParams, true);
 
-        [HttpGet("{nome}")]
-        public IActionResult ByName(string nome)
-        {
-            Professor prof = _repo.GetProfessorByName(nome);
-            if(prof == null) return BadRequest("Não existe nenhum professor com esse nome!");
-            return Ok(_mapper.Map<ProfessorDto>(prof));
-        }
+            var profResult = _mapper.Map<IEnumerable<ProfessorDto>>(professores);
 
+            Response.AddPagination(professores.CurrentPage, 
+                                   professores.PageSize, 
+                                   professores.TotalCount, 
+                                   professores.TotalPage
+            );
+
+            return Ok(profResult);
+        }
+        
         [HttpPost]
         public IActionResult Post(ProfessorDto model)
         {
@@ -60,7 +55,7 @@ namespace SchoolAPIcode.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(int id, ProfessorRegistrarDto model)
         {
-            Professor prof = _repo.GetProfessorById(id);
+            var prof = _repo.GetProfessorById(id);
             if(prof == null) return BadRequest("Não existe professor com o id informado");
             
             _mapper.Map(model, prof);
@@ -77,7 +72,7 @@ namespace SchoolAPIcode.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            Professor prof = _repo.GetProfessorById(id);
+            var prof = _repo.GetProfessorById(id);
             if(prof == null) return BadRequest("Não existe professor com esse id!");
 
             _repo.Delete(prof);
@@ -87,11 +82,7 @@ namespace SchoolAPIcode.Controllers
             }
 
             return BadRequest("Professor não deletado!");
-
         }
-
-
-
 
     }
 }

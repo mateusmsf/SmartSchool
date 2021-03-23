@@ -12,8 +12,11 @@ namespace SchoolAPIcode.Helpers
         }
 
 
+        
         public int? Matricula { get; set; } = null;
         public string Nome { get; set; } = string.Empty;
-        public bool Ativo { get; set; }
+        public int? id { get; set; } = null;
+        public int? disciplinaId { get; set; } = null;
+
     }
 }

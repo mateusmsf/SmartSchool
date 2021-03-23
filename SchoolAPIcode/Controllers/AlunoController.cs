@@ -27,34 +27,17 @@ namespace SchoolAPIcode.Controllers
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery]PageParams pageParams)
         {
-            var alunos = await _repo.GetAllAlunosAsync(pageParams, true);
+            var alunos = await _repo.GetAlunosAsync(pageParams, true);
 
             var alunosResult = _mapper.Map<IEnumerable<AlunoDto>>(alunos);
 
-            Response.AddPagination(alunos.CurrentPage, alunos.PageSize, alunos.TotalCount, alunos.TotalPage);
+            Response.AddPagination(alunos.CurrentPage, 
+                                   alunos.PageSize, 
+                                   alunos.TotalCount, 
+                                   alunos.TotalPage
+            );
 
             return Ok(alunosResult);
-        }
-
-
-        [HttpGet("byId")]
-        public IActionResult GetById(int id)
-        {
-            var aluno = _repo.GetAlunoById(id, true);
-
-            if(aluno == null) return BadRequest("Aluno não encontrado");
-
-            return Ok(_mapper.Map<AlunoDto>(aluno));
-        }
-
-        [HttpGet("{nome}")]
-        public IActionResult GetByName(string nome)
-        {
-            var aluno = _repo.GetAlunoByName(nome, true);
-
-            if(aluno == null) return BadRequest("Aluno não encontrado");
-
-            return Ok(_mapper.Map<AlunoDto>(aluno));
         }
 
 

@@ -15,18 +15,14 @@ namespace SchoolAPIcode.Data
 
 
         //Metodos Alunos 
-         Aluno[] GetAllAlunos(bool includeProfessor = false);
-         Task<PageList<Aluno>> GetAllAlunosAsync(PageParams pageParams, bool includeProfessor = false);
-         Aluno[] GetAllAlunosByDisciplinaId( int disciplinaId, bool includeProfessor = false);
-         Aluno GetAlunoById( int id, bool includeProfessor = false);
-         Aluno GetAlunoByName(string nome, bool includeProfessor = false);
-
-
+         Task<PageList<Aluno>> GetAlunosAsync(PageParams pageParams, bool includeProfessor = false);
+         Aluno GetAlunoById(int id);
+    
+         
          //Metodos Professores 
-         Professor[] GetAllProfessores(bool includeAlunos = false);
-         Professor[] GetAllProfessoresByDisciplinaId(int disciplinaId, bool includeAlunos = false);
-         Professor GetProfessorById(int id, bool includeAluno = false);
-         Professor GetProfessorByName(string nome, bool includeAluno = false);
+          Task<PageList<Professor>> GetProfessoresAsync(PageParams pageParams, bool includeAluno = false);
+          Professor GetProfessorById(int id);
+      
 
          
     }

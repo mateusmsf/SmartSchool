@@ -13,5 +13,6 @@ namespace SchoolAPIcode.Helpers
             response.Headers.Add("Pagination", JsonConvert.SerializeObject(paginationHeader));
             response.Headers.Add("Access-Control-Expose-Header", "Pagination");
         }
+
     }
 }
